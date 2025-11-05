@@ -1,4 +1,4 @@
-name: Python Test
+name: Python Tests
 run-name: Rest API Python Tests
 
 on:
@@ -24,8 +24,8 @@ jobs:
              pip install --upgrade pip
              pip install -r requirements.txt
              export PYTHONPATH=${PYTHONPATH}:${{ github.workspace }}
-             pytest -s tests/part_01/test_users.py
-             
+             pytest -s tests/part_01/test_users.py --junitxml=results.xml
+
       - name: Create Test Summary
         uses: test-summary/action@dist
         if: success() || failure()
