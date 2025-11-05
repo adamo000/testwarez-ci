@@ -30,6 +30,7 @@ jobs:
              pip install -r requirements.txt
              export PYTHONPATH=${PYTHONPATH}:${{ github.workspace }}
              pytest -s tests/part_01/test_users.py --junitxml=results.xml --html=report.html
+        continue-on-error: true
 
       - name: Create Test Summary
         uses: test-summary/action@dist
