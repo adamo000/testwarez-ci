@@ -2,6 +2,14 @@ name: Python Tests
 run-name: Rest API Python Tests
 
 on:
+  schedule:
+    - cron: "*/2 * * * *"
+  workflow_dispatch:
+    inputs:
+      python_version:
+        description: 'Python version'
+        required: true
+        default: '3.13.2'
   push:
   
 jobs:
@@ -16,18 +24,28 @@ jobs:
       - name: Set up Python 3.13.2
         uses: actions/setup-python@v3
         with:
-          python-version: 3.13.2
-          
+          python-version: '${{ github.event.inputs.python_version }}'
+ 
       - name: Run Tests
         run: |
              chmod +x -R ${{ github.workspace }}
              pip install --upgrade pip
              pip install -r requirements.txt
              export PYTHONPATH=${PYTHONPATH}:${{ github.workspace }}
-             pytest -s tests/part_01/test_users.py --junitxml=results.xml
+             pytest -s tests/part_01/test_users.py --junitxml=results.xml --html=report.html
 
       - name: Create Test Summary
         uses: test-summary/action@dist
         if: success() || failure()
         with:
           paths: results.xml
+
+      - name: Upload pytest Test Results
+        uses: actions/upload-artifact@v4
+        if: success() || failure()
+        with:
+          name: test-results
+          path: |
+                results.xml
+                report.html
+                assets
